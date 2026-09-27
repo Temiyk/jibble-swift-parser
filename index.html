@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="styles/style.css">
+    <script defer src="js/parser.js"></script>
+    <title>Расчёт метрик Джилба и Маккейба</title>
+</head>
+<body>
+    <header>
+        <h1>Расчёт метрик Джилба и Маккейба</h1>
+    </header>
+
+    <main>
+        <section class="section-input">
+            <div class="container">
+                <label for="code">Введите код программы:</label><br>
+                <textarea required name="code" id="code" cols="60" rows="10"></textarea><br>
+                <button id="sendBtn">Расчёт</button>
+            </div>
+        </section>
+
+        <section class="section-result">
+            <div class="container container-result">
+                <h2>Результаты анализа потока управления</h2>
+
+                <table class="result-table" border="1">
+                    <caption id="table-result-caption">Выявленные точки ветвления программы</caption>
+                    <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Тип конструкции</th>
+                        <th>Строка</th>
+                        <th>Фрагмент кода</th>
+                        <th>Уровень вложенности (CLI)</th>
+                    </tr>
+                    </thead>
+                    <tbody id="result-tbody"></tbody>
+                </table>
+
+                <div id="metrics-summary" class="metrics-cards"></div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
