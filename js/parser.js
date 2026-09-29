@@ -420,62 +420,29 @@ function parseSwiftCode(code) {
 }
 
 function renderResults(decisions, totalStatements, maxCLI) {
-    const tbody = document.getElementById("result-tbody");
-    tbody.innerHTML = "";
-
-    decisions.forEach((item, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td><strong>${item.type}</strong></td>
-            <td>${item.line}</td>
-            <td><code>${escapeHtml(item.snippet)}</code></td>
-            <td>${item.cli}</td>
-        `;
-        tbody.appendChild(row);
-    });
 
     const CL = decisions.length;
     const cl = totalStatements > 0 ? (CL / totalStatements).toFixed(3) : 0;
-    const ZG = CL + 1;
 
     const cardsContainer = document.getElementById("metrics-summary");
     cardsContainer.innerHTML = `
         <div class="card">
-            <div class="card-title">Абсолютная сложность Джилба (CL)</div>
+            <div class="card-title">Абсолютная сложность (CL)</div>
             <div class="card-value">${CL}</div>
-            <div class="card-desc">Число условных операторов и ветвлений</div>
         </div>
         <div class="card">
             <div class="card-title">Общее число операторов (N)</div>
             <div class="card-value">${totalStatements}</div>
-            <div class="card-desc">Все классические операторы языка</div>
         </div>
         <div class="card">
-            <div class="card-title">Относительная сложность Джилба (cl)</div>
+            <div class="card-title">Относительная сложность (cl)</div>
             <div class="card-value">${cl}</div>
-            <div class="card-desc">cl = CL / N (насыщенность ветвлениями)</div>
         </div>
         <div class="card">
             <div class="card-title">Макс. уровень вложенности (CLI)</div>
             <div class="card-value">${maxCLI}</div>
-            <div class="card-desc">Глубина вложенности ветвлений</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Сложность Маккейба (Z(G))</div>
-            <div class="card-value">${ZG}</div>
-            <div class="card-desc">Z(G) = e - v + 2p = CL + 1</div>
         </div>
     `;
 
     document.querySelector(".container-result").style.display = "block";
-}
-
-function escapeHtml(str) {
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
 }
