@@ -199,6 +199,13 @@ function parseSwiftCode(code) {
         const currentContext = blockStack[blockStack.length - 1];
         let currentEffectiveDepth = currentContext ? currentContext.depth : 0;
 
+        // 1. Объявление функции func
+        if (val === 'func') {
+            statementCount++;
+            continue;
+        }
+
+        // 2. Ветвление if / else if
         if (val === 'if') {
             statementCount++;
             const decisionDepth = currentEffectiveDepth + 1;
@@ -224,6 +231,7 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 3. guard-else
         if (val === 'guard') {
             statementCount++;
             const decisionDepth = currentEffectiveDepth + 1;
@@ -242,6 +250,7 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 4. Цикл for-in
         if (val === 'for') {
             statementCount++;
             const decisionDepth = currentEffectiveDepth + 1;
@@ -267,6 +276,7 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 5. Цикл while
         if (val === 'while') {
             let isRepeatTail = false;
             if (prev === '}') {
@@ -307,6 +317,7 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 6. Цикл repeat-while
         if (val === 'repeat') {
             statementCount++;
             const decisionDepth = currentEffectiveDepth + 1;
@@ -325,6 +336,7 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 7. Селектор switch
         if (val === 'switch') {
             statementCount++;
             if (currentContext) {
@@ -333,6 +345,7 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 8. Ветка case
         if (val === 'case' && next !== ':') {
             statementCount++;
             let switchCtx = null;
@@ -364,11 +377,13 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 9. Ветка default
         if (val === 'default') {
             statementCount++;
             continue;
         }
 
+        // 10. Тернарный оператор (? :)
         if (val === '?') {
             let isTernary = false;
             let depthParen = 0;
@@ -396,11 +411,23 @@ function parseSwiftCode(code) {
             continue;
         }
 
+        // 11. Операторы передачи управления и стандартного вывода
         if (['return', 'break', 'continue', 'print'].includes(val)) {
             statementCount++;
-        } else if (['=', '+=', '-=', '*=', '/='].includes(val)) {
+        }
+        // 12. Вызовы пользовательских функций (например, processData())
+        else if (tok.type === 'ident' && next === '(') {
+            const nonCalls = ['func', 'if', 'guard', 'while', 'for', 'switch', 'return', 'let', 'var', 'catch'];
+            if (!nonCalls.includes(val) && prev !== 'func' && prev !== '.') {
+                statementCount++;
+            }
+        }
+        // 13. Операторы присваивания
+        else if (['=', '+=', '-=', '*=', '/=', '%='].includes(val)) {
             statementCount++;
-        } else if ((val === 'let' || val === 'var') && next) {
+        }
+        // 14. Инициализация переменных без знака =
+        else if ((val === 'let' || val === 'var') && next) {
             let hasAssign = false;
             for (let k = i + 1; k < tokens.length && tokens[k].line === tok.line; k++) {
                 if (tokens[k].value === '=') {
