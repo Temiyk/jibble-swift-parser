@@ -418,7 +418,7 @@ function parseSwiftCode(code) {
         // 12. Вызовы пользовательских функций (например, processData())
         else if (tok.type === 'ident' && next === '(') {
             const nonCalls = ['func', 'if', 'guard', 'while', 'for', 'switch', 'return', 'let', 'var', 'catch'];
-            if (!nonCalls.includes(val) && prev !== 'func' && prev !== '.') {
+            if (blockStack.length > 0 &&!nonCalls.includes(val) && prev !== 'func' && prev !== '.') {
                 statementCount++;
             }
         }
